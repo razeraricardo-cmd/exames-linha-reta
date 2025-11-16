@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Formatador de Exames – Linha Reta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f5fb;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-soft: rgba(37, 99, 235, 0.08);
+      --border: #e2e8f0;
+      --text: #111827;
+      --muted: #6b7280;
+      --radius: 16px;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top left, #dbeafe, #f5f5fb 40%);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 24px 24px 28px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header h1 span.logo-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 20% 20%, #3b82f6, #1d4ed8);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+    }
+
+    header p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: var(--primary-soft);
+      color: #1d4ed8;
+      border: 1px solid rgba(37, 99, 235, 0.22);
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px 16px 18px;
+      border: 1px solid var(--border);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h2 span.chip {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .card small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: inline-block;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      color: #4b5563;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      padding: 10px 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      line-height: 1.4;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      background: #ffffff;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .input-row input[type="date"] {
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      min-width: 150px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.05s ease, box-shadow 0.08s ease,
+        background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: #374151;
+    }
+
+    .btn-ghost:hover {
+      background: #f3f4f6;
+    }
+
+    .file-input-wrapper {
+      border-radius: 12px;
+      border: 1px dashed #cbd5f5;
+      background: radial-gradient(circle at top left, #eff6ff, #f9fafb);
+      padding: 10px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .file-input-wrapper label span {
+      font-weight: 600;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      font-size: 0.8rem;
+    }
+
+    .hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .output-header span {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .footer-note code {
+      background: #f3f4f6;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    .tag-warning {
+      font-size: 0.72rem;
+      color: #b91c1c;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>
+          <span class="logo-pill">Rx</span>
+          Formatador de Exames – Linha Reta
+        </h1>
+        <p>
+          Cole ou carregue os exames &rarr; escolha a data &rarr; gere a linha
+          pronta para colar na evolução.
+        </p>
+      </div>
+      <span class="badge">Protótipo local em HTML</span>
+    </header>
+
+    <div class="grid">
+      <!-- COLUNA ESQUERDA: Entrada -->
+      <section class="card">
+        <h2>
+          <span class="chip">1</span>
+          Entrada de exames
+        </h2>
+        <small>
+          Você pode <strong>colar o texto</strong> dos exames abaixo ou enviar
+          um arquivo <code>.txt</code>. Para PDF/DOC/DOCX, use o texto extraído
+          ou adapte o código com bibliotecas JS (comentários no script).
+        </small>
+
+        <div class="input-row" style="margin-top: 6px">
+          <div>
+            <label for="examDate">Data dos exames</label><br />
+            <input type="date" id="examDate" />
+          </div>
+          <button class="btn btn-ghost" id="btnExample" type="button">
+            Usar exemplo de texto
+          </button>
+          <button class="btn btn-ghost" id="btnClearInput" type="button">
+            Limpar texto
+          </button>
+        </div>
+
+        <div class="file-input-wrapper">
+          <label for="fileInput">
+            <span>Carregar arquivo de exames</span> (opcional)
+          </label>
+          <input
+            type="file"
+            id="fileInput"
+            accept=".txt,.pdf,.doc,.docx"
+          />
+          <span class="hint">
+            • <strong>.txt</strong> já é lido e enviado para a caixa de texto.<br />
+            • Para <strong>PDF/DOC/DOCX</strong>, você pode adaptar o código
+            com pdf.js / mammoth.js (veja comentários no JS) ou simplesmente
+            copiar e colar o conteúdo aqui.
+          </span>
+        </div>
+
+        <label for="inputText">Texto dos exames (copiar/colar do laudo)</label>
+        <textarea
+          id="inputText"
+          placeholder="Exemplo:&#10;Hemograma: Hb 13,0 g/dL; Ht 39,7%; leucócitos 10.910/mm³; neutrófilos 85,3% (9.306); linfócitos 7,7% (840) ..."
+        ></textarea>
+      </section>
+
+      <!-- COLUNA DIREITA: Saída -->
+      <section class="card">
+        <h2>
+          <span class="chip">2</span>
+          Saída formatada
+        </h2>
+        <div class="output-header">
+          <span>
+            Resultado em linha reta, pronto para colar no prontuário.
+          </span>
+          <div>
+            <button class="btn btn-primary" type="button" id="btnProcess">
+              Gerar linha de exames
+            </button>
+          </div>
+        </div>
+
+        <label for="outputText">Linha de exames (somente leitura)</label>
+        <textarea
+          id="outputText"
+          readonly
+          placeholder="15/11/25 Hb 13,0; Ht 39,7%; Leuco 10.910; Neu 85,3% (9.306); Linf 7,7% (840); ..."
+        ></textarea>
+
+        <div class="pill-list" id="pillList"></div>
+
+        <p class="footer-note">
+          Este protótipo vem com um conjunto inicial de exames mapeados
+          (hemograma, eletrólitos, função renal/hepática, gaso, parcial de
+          urina etc.).<br />
+          Para adicionar ou alterar exames, edite o array
+          <code>examDefinitions</code> no script.
+        </p>
+      </section>
+    </div>
+
+    <p class="tag-warning">
+      ⚠️ Importante: o parser é heurístico. Sempre revise o resultado antes de
+      colar na evolução.
+    </p>
+  </main>
+
+  <script>
+    // ============================
+    // DEFINIÇÃO DOS EXAMES
+    // ============================
+    // Cada exame tem:
+    // - label: o nome/abreviação desejado na linha final
+    // - patterns: regex que tentam capturar o valor partindo do texto bruto
+    // Você pode adicionar/editar/ordenar à vontade.
+    const examDefinitions = [
+      // Hemograma
+      {
+        label: "Hb",
+        patterns: [
+          /\bHb\b[:=\s]*([^;\n]+)/i,
+          /\bHemoglobina\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "Ht",
+        patterns: [
+          /\bHt\b[:=\s]*([^;\n]+)/i,
+          /\bHct\b[:=\s]*([^;\n]+)/i,
+          /\bHemat[óo]crito\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "Leuco",
+        patterns: [
+          /\bLeuco(?:citos)?\b[:=\s]*([^;\n]+)/i,
+          /\bLeuc[oó]citos\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "Neu",
+        patterns: [
+          /\bNeu\b[:=\s]*([^;\n]+)/i,
+          /\bNeutr[oó]filos?\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "Linf",
+        patterns: [
+          /\bLinf\b[:=\s]*([^;\n]+)/i,
+          /\bLinf[oó]citos\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "Mono",
+        patterns: [/\bMono\b[:=\s]*([^;\n]+)/i, /\bMon[oó]citos\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "Eos",
+        patterns: [
+          /\bEos\b[:=\s]*([^;\n]+)/i,
+          /\bEosin[oó]filos\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "Baso",
+        patterns: [
+          /\bBaso\b[:=\s]*([^;\n]+)/i,
+          /\bBas[oó]filos\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "Plaq",
+        patterns: [
+          /\bPlaq\b[:=\s]*([^;\n]+)/i,
+          /\bPlaquetas\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+
+      // Coagulação
+      {
+        label: "TP",
+        patterns: [/\bTP\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "INR",
+        patterns: [/\bINR\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "TTPa",
+        patterns: [/\bTTPa\b[:=\s]*([^;\n]+)/i, /\bTTP\b[:=\s]*([^;\n]+)/i],
+      },
+
+      // Função renal / eletrólitos / inflamação
+      {
+        label: "Ureia",
+        patterns: [/\bUreia\b[:=\s]*([^;\n]+)/i, /\bUr[ée]ia\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "Cr",
+        patterns: [
+          /\bCr\b[:=\s]*([^;\n]+)/i,
+          /\bCreatinina\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "TFGe",
+        patterns: [/\bTFGe\b[:=\s]*([^;\n]+)/i, /\bTFG\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "Na",
+        patterns: [/\bNa\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "K",
+        patterns: [/\bK\b[:=\s]*([^;\n]+)/i, /\bPot[áa]ssio\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "Cl",
+        patterns: [/\bCl\b[:=\s]*([^;\n]+)/i, /\bCl[óo]r[oô]?\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "Ca iônico",
+        patterns: [
+          /\bCa i[oó]nico\b[:=\s]*([^;\n]+)/i,
+          /\bC[áa]lcio i[oó]nico\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "PCR",
+        patterns: [/\bPCR\b[:=\s]*([^;\n]+)/i, /\bProte[ií]na C reativa\b[:=\s]*([^;\n]+)/i],
+      },
+
+      // Função hepática
+      {
+        label: "TGO",
+        patterns: [
+          /\bTGO\b[:=\s]*([^;\n]+)/i,
+          /\bAST\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "TGP",
+        patterns: [
+          /\bTGP\b[:=\s]*([^;\n]+)/i,
+          /\bALT\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "BT",
+        patterns: [
+          /\bBT\b[:=\s]*([^;\n]+)/i,
+          /\bBilirrubina total\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "BD",
+        patterns: [
+          /\bBD\b[:=\s]*([^;\n]+)/i,
+          /\bBilirrubina direta\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "BI",
+        patterns: [
+          /\bBI\b[:=\s]*([^;\n]+)/i,
+          /\bBilirrubina indireta\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+
+      // Gasometria
+      { label: "pH", patterns: [/\bpH\b[:=\s]*([^;\n]+)/i] },
+      { label: "pO2", patterns: [/\bpO2\b[:=\s]*([^;\n]+)/i] },
+      { label: "pCO2", patterns: [/\bpCO2\b[:=\s]*([^;\n]+)/i] },
+      { label: "HCO3", patterns: [/\bHCO3\b[:=\s]*([^;\n]+)/i] },
+      { label: "tCO2", patterns: [/\btCO2\b[:=\s]*([^;\n]+)/i] },
+      { label: "BE", patterns: [/\bBE\b[:=\s]*([^;\n]+)/i] },
+      { label: "SatO2", patterns: [/\bSatO2\b[:=\s]*([^;\n]+)/i, /\bSat[ou]ra[cç][aã]o O2\b[:=\s]*([^;\n]+)/i] },
+      {
+        label: "lactato",
+        patterns: [
+          /\blactato\b[:=\s]*([^;\n]+)/i,
+          /\bLactate\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "glicose",
+        patterns: [
+          /\bglicose\b[:=\s]*([^;\n]+)/i,
+          /\bglucose\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "lactato venoso",
+        patterns: [/\blactato venoso\b[:=\s]*([^;\n]+)/i],
+      },
+
+      // Urina tipo 1
+      {
+        label: "Urina 1",
+        patterns: [/\bUrina ?1\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "dens",
+        patterns: [
+          /\bdens(?:idade)?\b[:=\s]*([^;\n]+)/i,
+          /\bPeso espec[íi]fico\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      { label: "pH urina", patterns: [/\bpH\b.*urina[^;\n]*?([0-9.,]+)/i] },
+      {
+        label: "prot",
+        patterns: [
+          /\bprot[eíi]na\b[:=\s]*([^;\n]+)/i,
+          /\bprotein[uú]ria\b[:=\s]*([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "glicose urina",
+        patterns: [/\bglicose\b.*urina[^;\n]*?([^;\n]+)/i],
+      },
+      {
+        label: "cetona",
+        patterns: [/\bcetona[s]?\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "bilirrubina urina",
+        patterns: [/\bbilirrubina\b.*urina[^;\n]*?([^;\n]+)/i],
+      },
+      {
+        label: "urobilinogênio",
+        patterns: [/\burobilinog[eê]nio\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "nitrito",
+        patterns: [/\bnitrito\b[:=\s]*([^;\n]+)/i],
+      },
+      {
+        label: "leuco urina",
+        patterns: [
+          /\bleuc[oó]citos\b.*urina[^;\n]*?([^;\n]+)/i,
+          /\bleu[cç]os\b.*urina[^;\n]*?([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "hem urina",
+        patterns: [
+          /\bhem[óo]globina\b.*urina[^;\n]*?([^;\n]+)/i,
+          /\bhem[áa]cias\b.*urina[^;\n]*?([^;\n]+)/i,
+        ],
+      },
+      {
+        label: "cultura de urina",
+        patterns: [/\bcultura de urina\b[:=\s]*([^;\n]+)/i],
+      },
+    ];
+
+    // ============================
+    // UTILITÁRIOS
+    // ============================
+    function normalizeWhitespace(str) {
+      return str.replace(/\s+/g, " ").trim();
+    }
+
+    function extractField(rawText, definition) {
+      const text = rawText || "";
+      for (const pattern of definition.patterns) {
+        const match = text.match(pattern);
+        if (match && match[1]) {
+          let value = match[1]
+            .replace(/^[\s:=-]+/, "")
+            .replace(/[.;,\s]*$/, "");
+          value = normalizeWhitespace(value);
+          if (!value) return null;
+          return `${definition.label} ${value}`;
+        }
+      }
+      return null;
+    }
+
+    function formatDateBR(dateValue) {
+      if (!dateValue) return "";
+      const parts = dateValue.split("-");
+      if (parts.length !== 3) return "";
+      const [year, month, day] = parts;
+      const yy = year.slice(-2);
+      return `${day}/${month}/${yy}`;
+    }
+
+    // ============================
+    // LÓGICA PRINCIPAL
+    // ============================
+    function processExams() {
+      const rawText = document.getElementById("inputText").value || "";
+      const dateValue = document.getElementById("examDate").value;
+
+      if (!rawText.trim()) {
+        alert("Por favor, cole o texto dos exames ou carregue um arquivo .txt.");
+        return;
+      }
+
+      const dateStr = formatDateBR(dateValue);
+      if (!dateStr) {
+        if (
+          !confirm(
+            "Nenhuma data selecionada. Deseja gerar a linha sem data no início?"
+          )
+        ) {
+          return;
+        }
+      }
+
+      const results = [];
+      const foundLabels = [];
+
+      for (const def of examDefinitions) {
+        const field = extractField(rawText, def);
+        if (field) {
+          results.push(field);
+          foundLabels.push(def.label);
+        }
+      }
+
+      const pillList = document.getElementById("pillList");
+      pillList.innerHTML = "";
+      foundLabels.forEach((label) => {
+        const pill = document.createElement("span");
+        pill.className = "pill";
+        pill.textContent = label;
+        pillList.appendChild(pill);
+      });
+
+      if (!results.length) {
+        document.getElementById("outputText").value =
+          (dateStr ? dateStr + " " : "") +
+          "[Nenhum exame reconhecido com as regras atuais. Ajuste o array examDefinitions no código.]";
+        return;
+      }
+
+      const line =
+        (dateStr ? dateStr + " " : "") + results.join("; ") + ".";
+      document.getElementById("outputText").value = line;
+    }
+
+    // ============================
+    // ENTRADA DE ARQUIVO
+    // ============================
+    function handleFileInput(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const name = file.name.toLowerCase();
+      const ext = name.split(".").pop();
+
+      if (ext === "txt") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const text = e.target.result || "";
+          document.getElementById("inputText").value = text;
+        };
+        reader.readAsText(file, "utf-8");
+        return;
+      }
+
+      // Protótipo: mostramos alerta para PDF/DOC/DOCX
+      if (ext === "pdf" || ext === "doc" || ext === "docx") {
+        alert(
+          "Para PDF/DOC/DOCX, este protótipo não faz a extração automática.\n\n" +
+            "Opções:\n" +
+            "1) Abra o arquivo normalmente, copie e cole o texto na caixa de entrada.\n" +
+            "2) Adapte este HTML incluindo bibliotecas como pdf.js (para PDF) ou mammoth.js (para DOCX) " +
+            "e, dentro desta função handleFileInput, converta o conteúdo para texto e jogue em #inputText."
+        );
+        // Aqui você poderia, por exemplo:
+        // - pdf.js: ler páginas do PDF e concatenar texto.
+        // - mammoth.js: mammoth.extractRawText({ arrayBuffer: ... }) para DOCX.
+      } else {
+        alert("Formato não suportado neste protótipo. Use .txt ou copie e cole o texto.");
+      }
+    }
+
+    // ============================
+    // EXEMPLO DE TEXTO
+    // ============================
+    function fillExample() {
+      const example =
+        "Hemograma: Hb 13,0 g/dL; Ht 39,7%; Leucócitos 10.910/mm³; Neutrófilos 85,3% (9.306); " +
+        "Linfócitos 7,7% (840); Monócitos 6,5% (709); Eosinófilos 0,2% (22); Basófilos 0,3% (33); Plaquetas 171.000/mm³.\n" +
+        "Coagulação: TP 12,7 s (atividade 83,5%; INR 1,10); TTPa 24,6 s (razão 0,98).\n" +
+        "Bioquímica: Ureia 24 mg/dL; Creatinina 0,39 mg/dL (TFGe > 90 mL/min/1,73m²); Sódio 125 mEq/L; Potássio 4,0 mEq/L; PCR 48,2 mg/L; " +
+        "TGO 21 U/L; TGP 24 U/L; Bilirrubina total 0,85; direta 0,30; indireta 0,55.\n" +
+        "Gasometria arterial: pH 7,502; pO2 86,4; pCO2 29,1; HCO3 22,3; tCO2 23,2; BE 0,2; SatO2 97,4%; lactato 1,60; Na 122,7; K 3,48; glicose 146; Ca iônico 1,04; Cl 90.\n" +
+        "Lactato venoso 2,13.\n" +
+        "Urina 1: densidade 1,015; pH 8,0; proteína ++; glicose ausente; cetona ++; bilirrubina negativa; urobilinogênio normal; nitrito negativo; leucócitos negativos; hemoglobina negativa; cultura de urina em andamento.";
+      document.getElementById("inputText").value = example;
+    }
+
+    function clearInput() {
+      document.getElementById("inputText").value = "";
+    }
+
+    // ============================
+    // EVENTOS
+    // ============================
+    document
+      .getElementById("btnProcess")
+      .addEventListener("click", processExams);
+    document
+      .getElementById("fileInput")
+      .addEventListener("change", handleFileInput);
+    document
+      .getElementById("btnExample")
+      .addEventListener("click", fillExample);
+    document
+      .getElementById("btnClearInput")
+      .addEventListener("click", clearInput);
+  </script>
+</body>
+</html>
